@@ -25,7 +25,6 @@ import javax.swing.table.DefaultTableModel;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 /**
  *
  * @author HADI PC
@@ -38,8 +37,8 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
     public TabelBukuAlamatGUI() {
         initComponents();
         table = new DefaultTableModel(
-            new String[]{"ID", "Nama", "Relasi", "Telepon", "Alamat", "Kota"}, 
-            0 
+                new String[]{"ID", "Nama", "Relasi", "Telepon", "Alamat", "Kota"},
+                0
         );
 
         // Menghubungkan tabel ke komponen tabel di GUI
@@ -298,101 +297,127 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_txtAlamatActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-        // TODO add your handling code here:
+        // Validasi: Periksa apakah input kosong
+        if (txtNama.getText().trim().isEmpty()
+                || txtRelasi.getText().trim().isEmpty()
+                || txtTelepon.getText().trim().isEmpty()
+                || txtAlamat.getText().trim().isEmpty()
+                || txtKota.getText().trim().isEmpty()) {
+
+            JOptionPane.showMessageDialog(this,
+                    "Input data tidak boleh kosong!",
+                    "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            return; // Hentikan eksekusi jika ada input kosong
+        }
+
+        // Ambil nilai dari input
         String nama = txtNama.getText();
         String relasi = txtRelasi.getText();
         String telpon = txtTelepon.getText();
         String alamat = txtAlamat.getText();
         String kota = txtKota.getText();
+
         try {
             settings.addData(nama, relasi, telpon, alamat, kota);
-            cekUlang();
+            cekUlang(); // Refresh tabel
+            JOptionPane.showMessageDialog(this,
+                    "Data berhasil ditambahkan!",
+                    "Sukses",
+                    JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
             Logger.getLogger(TabelBukuAlamatGUI.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this,
+                    "Terjadi kesalahan saat menyimpan data.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnTambahActionPerformed
 
-   private void exportToCSV() {
-    String fileName = "buku_alamat.csv";
-    File fileToSave = new File(fileName);
+    private void exportToCSV() {
+        String fileName = "buku_alamat.csv";
+        File fileToSave = new File(fileName);
 
-    try (FileWriter csvWriter = new FileWriter(fileToSave)) {
-        // Write header
-        for (int i = 0; i < jTable2.getColumnCount(); i++) {
-            csvWriter.append(jTable2.getColumnName(i)); // Perbaikan di sini
-            if (i < jTable2.getColumnCount() - 1) csvWriter.append(",");
-        }
-        csvWriter.append("\n");
-
-        // Write rows
-        for (int i = 0; i < jTable2.getRowCount(); i++) {
-            for (int j = 0; j < jTable2.getColumnCount(); j++) {
-                csvWriter.append(jTable2.getValueAt(i, j).toString());
-                if (j < jTable2.getColumnCount() - 1) csvWriter.append(",");
+        try (FileWriter csvWriter = new FileWriter(fileToSave)) {
+            // Write header
+            for (int i = 0; i < jTable2.getColumnCount(); i++) {
+                csvWriter.append(jTable2.getColumnName(i)); // Perbaikan di sini
+                if (i < jTable2.getColumnCount() - 1) {
+                    csvWriter.append(",");
+                }
             }
             csvWriter.append("\n");
+
+            // Write rows
+            for (int i = 0; i < jTable2.getRowCount(); i++) {
+                for (int j = 0; j < jTable2.getColumnCount(); j++) {
+                    csvWriter.append(jTable2.getValueAt(i, j).toString());
+                    if (j < jTable2.getColumnCount() - 1) {
+                        csvWriter.append(",");
+                    }
+                }
+                csvWriter.append("\n");
+            }
+
+            JOptionPane.showMessageDialog(this, "Data successfully exported to " + fileToSave.getAbsolutePath(), "Export Successful", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error exporting data: " + ex.getMessage(), "Export Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        JOptionPane.showMessageDialog(this, "Data successfully exported to " + fileToSave.getAbsolutePath(), "Export Successful", JOptionPane.INFORMATION_MESSAGE);
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Error exporting data: " + ex.getMessage(), "Export Error", JOptionPane.ERROR_MESSAGE);
     }
-}
 
 
-    
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
-         txtNama.setText("");
-         txtRelasi.setText("");
-         txtTelepon.setText("");
-         txtAlamat.setText("");
-         txtKota.setText("");
-         txtNama.requestFocus();
+        txtNama.setText("");
+        txtRelasi.setText("");
+        txtTelepon.setText("");
+        txtAlamat.setText("");
+        txtKota.setText("");
+        txtNama.requestFocus();
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
         // TODO add your handling code here:
-          int row = jTable2.getSelectedRow();
+        int row = jTable2.getSelectedRow();
         // Mengisi input field dengan data dari tabel berdasarkan baris yang dipilih
-        txtNama.setText(jTable2.getValueAt(row, 1).toString()); 
-        txtRelasi.setText(jTable2.getValueAt(row, 2).toString()); 
-        txtTelepon.setText(jTable2.getValueAt(row, 3).toString()); 
-        txtAlamat.setText(jTable2.getValueAt(row, 4).toString()); 
-        txtKota.setText(jTable2.getValueAt(row, 5).toString()); 
+        txtNama.setText(jTable2.getValueAt(row, 1).toString());
+        txtRelasi.setText(jTable2.getValueAt(row, 2).toString());
+        txtTelepon.setText(jTable2.getValueAt(row, 3).toString());
+        txtAlamat.setText(jTable2.getValueAt(row, 4).toString());
+        txtKota.setText(jTable2.getValueAt(row, 5).toString());
     }//GEN-LAST:event_jTable2MouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         int row = jTable2.getSelectedRow();
 
-    // Validasi: memastikan ada baris yang dipilih
-    if (row == -1) {
-        JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus."); // Pesan jika tidak ada baris yang dipilih
-          }
+        // Validasi: memastikan ada baris yang dipilih
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus."); // Pesan jika tidak ada baris yang dipilih
+        }
 
-    // Mengambil ID dari baris yang dipilih
-    String id = table.getValueAt(row, 0).toString();
+        // Mengambil ID dari baris yang dipilih
+        String id = table.getValueAt(row, 0).toString();
 
-    // Query SQL untuk menghapus data berdasarkan ID
-    String sql = "DELETE FROM buku_alamat WHERE id = ?";
+        // Query SQL untuk menghapus data berdasarkan ID
+        String sql = "DELETE FROM buku_alamat WHERE id = ?";
 
-    try (PreparedStatement pstmt = client.prepareStatement(sql)) {
-        pstmt.setInt(1, Integer.parseInt(id));
+        try (PreparedStatement pstmt = client.prepareStatement(sql)) {
+            pstmt.setInt(1, Integer.parseInt(id));
 
-        pstmt.executeUpdate();
+            pstmt.executeUpdate();
 
-        JOptionPane.showMessageDialog(null, "Data berhasil dihapus", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-        cekUlang();
-         txtNama.setText("");
-         txtRelasi.setText("");
-         txtTelepon.setText("");
-         txtAlamat.setText("");
-         txtKota.setText("");
-         txtNama.requestFocus();
-    } catch (SQLException e) {
-        System.out.println(e.getMessage());
-    }
+            JOptionPane.showMessageDialog(null, "Data berhasil dihapus", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            cekUlang();
+            txtNama.setText("");
+            txtRelasi.setText("");
+            txtTelepon.setText("");
+            txtAlamat.setText("");
+            txtKota.setText("");
+            txtNama.requestFocus();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
@@ -414,7 +439,7 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         restrictToNumericInput(txtTelepon);
     }//GEN-LAST:event_txtTeleponKeyReleased
-public static void restrictToNumericInput(JTextField textField) {
+    public static void restrictToNumericInput(JTextField textField) {
         textField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -427,69 +452,67 @@ public static void restrictToNumericInput(JTextField textField) {
         });
     }
 
-   private void importFromCSV() {
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setDialogTitle("Select CSV File");
-    int userSelection = fileChooser.showOpenDialog(this);
+    private void importFromCSV() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select CSV File");
+        int userSelection = fileChooser.showOpenDialog(this);
 
-    if (userSelection == JFileChooser.APPROVE_OPTION) {
-        File fileToLoad = fileChooser.getSelectedFile();
-        try (BufferedReader csvReader = new BufferedReader(new FileReader(fileToLoad))) {
-            String row;
-            table.setRowCount(0); // Clear existing data
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToLoad = fileChooser.getSelectedFile();
+            try (BufferedReader csvReader = new BufferedReader(new FileReader(fileToLoad))) {
+                String row;
+                table.setRowCount(0); // Clear existing data
 
-            boolean isFirstRow = true; // Flag to skip the header row
-            while ((row = csvReader.readLine()) != null) {
-                if (isFirstRow) {
-                    isFirstRow = false; // Skip the first row (header)
-                    continue;
+                boolean isFirstRow = true; // Flag to skip the header row
+                while ((row = csvReader.readLine()) != null) {
+                    if (isFirstRow) {
+                        isFirstRow = false; // Skip the first row (header)
+                        continue;
+                    }
+
+                    String[] data = row.split(",");
+                    table.addRow(data);
                 }
-
-                String[] data = row.split(",");
-                table.addRow(data);
+                JOptionPane.showMessageDialog(this, "Data successfully imported from CSV.", "Import Successful", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error importing data: " + ex.getMessage(), "Import Error", JOptionPane.ERROR_MESSAGE);
             }
-            JOptionPane.showMessageDialog(this, "Data successfully imported from CSV.", "Import Successful", JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error importing data: " + ex.getMessage(), "Import Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-}
-
 
     private void cekUlang() {
-    // Query SQL untuk mengambil semua data dari tabel recipes
-    var sql = "SELECT * FROM buku_alamat";
+        // Query SQL untuk mengambil semua data dari tabel recipes
+        var sql = "SELECT * FROM buku_alamat";
 
-    // Debug statement untuk memastikan metode dipanggil
-    System.out.println("refreshTable called.");
+        // Debug statement untuk memastikan metode dipanggil
+        System.out.println("refreshTable called.");
 
-    // Validasi: pastikan table sudah diinisialisasi
-    if (table == null) {
-        System.err.println("Error: table is still not initialized in refreshTable.");
-        return;
-    }
-
-    try (Statement stmt = client.createStatement(); 
-         ResultSet rs = stmt.executeQuery(sql)) {
-        // Menghapus data yang sudah ada di tabel
-        table.setRowCount(0);
-
-        // Menambahkan data dari hasil query ke tabel
-        while (rs.next()) {
-            table.addRow(new Object[]{
-                rs.getInt("id"),            
-                rs.getString("nama"),      
-                rs.getString("relasi"),     
-                rs.getString("telpon"),
-                rs.getString("alamat"),     
-                rs.getString("kota")       
-            });
+        // Validasi: pastikan table sudah diinisialisasi
+        if (table == null) {
+            System.err.println("Error: table is still not initialized in refreshTable.");
+            return;
         }
-    } catch (SQLException e) {
-        // Menampilkan pesan error jika terjadi kesalahan SQL
-        System.out.println(e.getMessage());
+
+        try (Statement stmt = client.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            // Menghapus data yang sudah ada di tabel
+            table.setRowCount(0);
+
+            // Menambahkan data dari hasil query ke tabel
+            while (rs.next()) {
+                table.addRow(new Object[]{
+                    rs.getInt("id"),
+                    rs.getString("nama"),
+                    rs.getString("relasi"),
+                    rs.getString("telpon"),
+                    rs.getString("alamat"),
+                    rs.getString("kota")
+                });
+            }
+        } catch (SQLException e) {
+            // Menampilkan pesan error jika terjadi kesalahan SQL
+            System.out.println(e.getMessage());
+        }
     }
-}
 
     /**
      * @param args the command line arguments
