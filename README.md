@@ -22,7 +22,7 @@ Aplikasi ini adalah aplikasi pembukuan alamat sederhana yang dibuat menggunakan 
 `BukuAlamatGUI` adalah kelas utama yang menangani tampilan GUI aplikasi. Kelas ini berfungsi untuk menampilkan tampilan awal yang berisi:
 - Judul aplikasi
 - Nama pengembang
-- NIM pengembang
+- NPM pengembang
 - Gambar ikon buku alamat
 - Tombol untuk membuka tampilan tabel buku alamat.
 
