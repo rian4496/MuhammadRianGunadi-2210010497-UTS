@@ -213,8 +213,8 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 456, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -255,20 +255,20 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(btnImport)
                         .addGap(18, 18, 18)
                         .addComponent(btnExport)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(jButton1)
-                        .addGap(14, 14, 14))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -298,20 +298,11 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // Validasi: Periksa apakah input kosong
-        if (txtNama.getText().trim().isEmpty()
-                || txtRelasi.getText().trim().isEmpty()
-                || txtTelepon.getText().trim().isEmpty()
-                || txtAlamat.getText().trim().isEmpty()
-                || txtKota.getText().trim().isEmpty()) {
-
-            JOptionPane.showMessageDialog(this,
-                    "Input data tidak boleh kosong!",
-                    "Peringatan",
-                    JOptionPane.WARNING_MESSAGE);
-            return; // Hentikan eksekusi jika ada input kosong
+        if (!isValidInput()) {
+            return; // Hentikan eksekusi jika input tidak valid
         }
 
-        // Ambil nilai dari input
+        // Ambil nilai input
         String nama = txtNama.getText();
         String relasi = txtRelasi.getText();
         String telpon = txtTelepon.getText();
@@ -319,19 +310,54 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
         String kota = txtKota.getText();
 
         try {
-            settings.addData(nama, relasi, telpon, alamat, kota);
+            // Panggil metode untuk menyimpan data
+            settings.addData(nama, relasi, telpon, alamat, kota, true);
             cekUlang(); // Refresh tabel
-            JOptionPane.showMessageDialog(this,
-                    "Data berhasil ditambahkan!",
-                    "Sukses",
-                    JOptionPane.INFORMATION_MESSAGE);
+            resetForm(); // Reset input setelah berhasil
         } catch (SQLException ex) {
-            Logger.getLogger(TabelBukuAlamatGUI.class.getName()).log(Level.SEVERE, null, ex);
+            // Logging dan pemberian feedback error
+            Logger.getLogger(TabelBukuAlamatGUI.class.getName()).log(Level.SEVERE, "Kesalahan saat menyimpan data", ex);
             JOptionPane.showMessageDialog(this,
-                    "Terjadi kesalahan saat menyimpan data.",
+                    "Terjadi kesalahan saat menyimpan data. Pesan: " + ex.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+// Metode untuk validasi input
+    private boolean isValidInput() {
+        if (txtNama.getText().trim().isEmpty()
+                || txtRelasi.getText().trim().isEmpty()
+                || txtTelepon.getText().trim().isEmpty()
+                || txtAlamat.getText().trim().isEmpty()
+                || txtKota.getText().trim().isEmpty()) {
+
+            JOptionPane.showMessageDialog(this,
+                    "Data tidak bisa disimpan karena ada input yang masih kosong!",
+                    "Validasi Gagal",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        // Validasi format nomor telepon (opsional)
+        if (!txtTelepon.getText().matches("\\d+")) {
+            JOptionPane.showMessageDialog(this,
+                    "Nomor telepon harus berupa angka!",
+                    "Validasi Gagal",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+// Metode untuk mereset input form
+    private void resetForm() {
+        txtNama.setText("");
+        txtRelasi.setText("");
+        txtTelepon.setText("");
+        txtAlamat.setText("");
+        txtKota.setText("");
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void exportToCSV() {
@@ -421,13 +447,30 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        // TODO add your handling code here:
-        exportToCSV();
+        if (jTable2.getRowCount() < 1) {
+            JOptionPane.showMessageDialog(this,
+                    "Data tidak bisa disimpan karena data kosong!",
+                    "Export Failed",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            try {
+                exportToCSV(); // Panggil fungsi ekspor
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                        "Terjadi kesalahan saat mengekspor data: " + e.getMessage(),
+                        "Export Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
-        // TODO add your handling code here:
-        importFromCSV();
+        try {
+            // TODO add your handling code here:
+            importFromCSV();
+        } catch (SQLException ex) {
+            Logger.getLogger(TabelBukuAlamatGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnImportActionPerformed
 
     private void txtTeleponActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTeleponActionPerformed
@@ -452,7 +495,7 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
         });
     }
 
-    private void importFromCSV() {
+    private void importFromCSV() throws SQLException {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select CSV File");
         int userSelection = fileChooser.showOpenDialog(this);
@@ -472,6 +515,8 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
 
                     String[] data = row.split(",");
                     table.addRow(data);
+                    settings.addData(data[1], data[2], data[3], data[4], data[5], false);
+                    cekUlang();
                 }
                 JOptionPane.showMessageDialog(this, "Data successfully imported from CSV.", "Import Successful", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException ex) {

@@ -21,7 +21,7 @@ public class tambahData {
     PreparedStatement pst;
 
     // Metode untuk menambahkan data ke dalam tabel `recipes`
-    public String addData(String nama,String relasi, String telpon, String alamat, String kota) throws SQLException {
+    public String addData(String nama,String relasi, String telpon, String alamat, String kota, boolean cek) throws SQLException {
         String queryTambah = "INSERT INTO buku_alamat VALUES (null, ?, ?, ?, ?,?);";
         // Menyiapkan pernyataan SQL untuk diisi dengan data
         pst = conn.prepareStatement(queryTambah);
@@ -35,8 +35,12 @@ public class tambahData {
         // Menjalankan pernyataan SQL untuk menambahkan data ke database
         int result = pst.executeUpdate(); // Mengembalikan jumlah baris yang dimodifikasi
         if (result > 0) { // Mengecek apakah ada data yang berhasil ditambahkan
-                JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            if (cek){
+                 JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             return "{ \"status\": 200, \"message\": \"Sukses Tambah Data\" }";
+            } else {
+                return null;
+            }
         } else {
             // Jika data gagal ditambahkan, mengembalikan pesan gagal dalam format JSON
             return "{ \"status\": 500, \"message\": \"Gagal Tambah Data\" }";
