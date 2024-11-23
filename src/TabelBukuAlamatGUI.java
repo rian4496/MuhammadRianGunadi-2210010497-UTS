@@ -339,10 +339,19 @@ public class TabelBukuAlamatGUI extends javax.swing.JFrame {
             return false;
         }
 
-        // Validasi format nomor telepon (opsional)
+        // Validasi format nomor telepon
         if (!txtTelepon.getText().matches("\\d+")) {
             JOptionPane.showMessageDialog(this,
                     "Nomor telepon harus berupa angka!",
+                    "Validasi Gagal",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        // Validasi format nama: hanya huruf dan spasi
+        if (!txtNama.getText().matches("[a-zA-Z ]+")) {
+            JOptionPane.showMessageDialog(this,
+                    "Nama hanya boleh mengandung huruf dan spasi!",
                     "Validasi Gagal",
                     JOptionPane.WARNING_MESSAGE);
             return false;
